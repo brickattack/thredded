@@ -13,7 +13,7 @@ class SearchParser
     found_terms = []
 
     @keywords.each do |keyword|
-      regex = Regexp.new(keyword+'\s*:\s*\w+')
+      regex = Regexp.new(keyword+'\s*:\s*\w+', Regexp::IGNORECASE)
       found_for_keyword = @query.scan(regex)
       @query = @query.gsub(regex, '')
       if found_for_keyword.present?

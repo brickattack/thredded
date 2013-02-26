@@ -77,4 +77,23 @@ describe SearchSqlBuilder, 'build' do
     search_query = 'spring by:shaun by:joel'
     Topic.full_text_search(search_query, messageboard).should have(2).item
   end
+
+  it 'finds results from the topic title or post content' do
+    messageboard = create(:messageboard)
+    joel = create(:user, name: 'joel')
+    shaun = create(:user, name: 'shaun')
+
+    topic1 = create(:topic, messageboard: messageboard,
+                    title: 'Joel made a topic', user: joel, with_categories: 1)
+    topic2 = create(:topic, messageboard: messageboard,
+                    title: 'Shaun made a topic', user: shaun, with_categories: 1)
+
+    topic1.posts.create!(topic: topic1, messageboard: topic1.messageboard,
+                         content: 'spring board cats', user: joel)
+    topic2.posts.create!(topic: topic2, messageboard: topic2.messageboard,
+                         content: 'alpine spring is very refreshing', user: shaun)
+
+    search_query = "made"
+    Topic.full_text_search(search_query, messageboard).should have(2).item
+  end
 end
