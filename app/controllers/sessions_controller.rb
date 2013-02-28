@@ -11,9 +11,23 @@ class SessionsController < Devise::SessionsController
         <a href='/users/edit'>visit your account page</a>.
       EOC
 
-      redirect_to root_path, flash: { notice: notice }
+      redirect_to home_or_origin_path, flash: { notice: notice }
     else
+      if params['after_sign_in_redirect']
+        session[:redirect_url] = params['after_sign_in_redirect']
+      end
+
       super
+    end
+  end
+
+  private
+
+  def home_or_origin_path
+    if request.env['omniauth.origin'].include? 'users/sign_in'
+      root_path
+    else
+      request.env['omniauth.origin']
     end
   end
 end

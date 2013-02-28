@@ -43,12 +43,28 @@ feature 'Visitor authenticates w/Oauth' do
     expect(visitor).to be_signed_in_as_previous_user
   end
 
+  scenario 'Signs in through a topic on a board postable by anyone logged in' do
+    messageboard_is_postable_by_logged_in_users
+
+    visitor = the_new_visitor
+    visitor.visits_the_latest_thread
+    visitor.signs_up_via_github
+
+    expect(visitor).to be_logged_in
+    expect(visitor).to be_on_latest_thread
+  end
+
   def the_previous_user
     @the_previous_user ||= create(:user, email: 'joel@example.com', password: 'password')
   end
 
   def the_new_visitor
     Visitor.new
+  end
+
+  def messageboard_is_postable_by_logged_in_users
+    board = default_messageboard
+    board.update_attributes!(posting_permission: 'logged_in')
   end
 
   class Visitor

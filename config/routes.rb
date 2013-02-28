@@ -9,9 +9,10 @@ Thredded::Application.routes.draw do
     match '/auth/:provider/callback', to: 'sessions#create'
   end
 
-  match '/mail/receive' => 'griddler/emails#create', via: :post
-  match '/auth/failure', to: redirect('/')
-  match '/identities' => 'identities#update', as: :identity, via: :put
+  get '/auth/failure', to: redirect('/')
+  get '/auth/github', as: :auth_github
+  put '/identities' => 'identities#update', as: :identity
+  post '/mail/receive' => 'griddler/emails#create'
 
   constraints(SetupThredded.new) do
     root to: 'setups#new'
